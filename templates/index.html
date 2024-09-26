@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Web Search</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+
+<h1>Semantic Web Search</h1>
+<input type="text" id="search-query" placeholder="Enter search term...">
+<button onclick="search()">Search</button>
+
+<div id="results"></div>
+
+<!--<h2>Conceptual Relations</h2>
+<svg width="600" height="400"></svg>-->
+
+<script>
+// Function to send the search request to the backend
+function search() {
+    const query = document.getElementById('search-query').value;
+    
+    fetch('/search', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '<h3>Search Results:</h3>';
+        
+        data.forEach(book => {
+            resultsDiv.innerHTML += `<p><strong>Title:</strong> ${book.title} <br> <strong>Author:</strong> ${book.author}</p>`;
+        });
+    });
+}
+/**
+// Function to fetch and visualize relations
+fetch('/relations')
+    .then(response => response.json())
+    .then(data => {
+        const svg = d3.select("svg"),
+            width = +svg.attr("width"),
+            height = +svg.attr("height");
+
+        const simulation = d3.forceSimulation(data.nodes)
+            .force("link", d3.forceLink(data.links).id(d => d.id))
+            .force("charge", d3.forceManyBody())
+            .force("center", d3.forceCenter(width / 2, height / 2));
+
+        const link = svg.append("g")
+            .selectAll("line")
+            .data(data.links)
+            .enter().append("line")
+            .attr("stroke-width", d => Math.sqrt(d.value));
+
+        const node = svg.append("g")
+            .selectAll("circle")
+            .data(data.nodes)
+            .enter().append("circle")
+            .attr("r", 5)
+            .attr("fill", "#69b3a2");
+
+        node.append("title")
+            .text(d => d.id);
+
+        simulation.on("tick", () => {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            node
+                .attr("cx", d => d.x)
+                .attr("cy", d => d.y);
+        });
+    });**/
+</script>
+
+</body>
+</html>
